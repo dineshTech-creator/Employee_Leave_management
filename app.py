@@ -82,6 +82,14 @@ def employee_required(f):
         if 'employee_id' not in session:
             flash('Please login to continue.', 'error')
             return redirect(url_for('employee_login'))
+        
+        # Verify employee still exists in database
+        emp = db.session.get(Employee, session['employee_id'])
+        if not emp:
+            session.clear()
+            flash('Session expired or invalid. Please login again.', 'error')
+            return redirect(url_for('employee_login'))
+            
         return f(*args, **kwargs)
     return decorated
 
@@ -92,6 +100,14 @@ def admin_required(f):
         if 'admin_id' not in session:
             flash('Admin login required.', 'error')
             return redirect(url_for('admin_login'))
+            
+        # Verify admin still exists in database
+        admin = db.session.get(Admin, session['admin_id'])
+        if not admin:
+            session.clear()
+            flash('Session expired or invalid. Please login again.', 'error')
+            return redirect(url_for('admin_login'))
+            
         return f(*args, **kwargs)
     return decorated
 
