@@ -2,7 +2,7 @@
 
 ## ✅ Quick Start (SQLite - No Server Needed!)
 
-This project now uses **SQLite** instead of MySQL, making it super easy to run locally with zero configuration!
+This project uses **SQLite** making it super easy to run locally with zero configuration!
 
 ### Step 1: Install Dependencies
 ```bash
@@ -10,21 +10,7 @@ cd d:\MiniProject\Employee_Leave_Management
 pip install -r requirements.txt
 ```
 
-### Step 2: Initialize Database
-Open your browser and visit:
-```
-http://localhost:5000/init_db
-```
-You should see: ✅ Database initialized!
-
-### Step 3: Create Admin Account
-Visit:
-```
-http://localhost:5000/seed_admin
-```
-You should see: ✅ Admin created! Email: admin@company.com | Password: Admin@123
-
-### Step 4: Run the Application
+### Step 2: Run the Application
 ```bash
 python app.py
 ```
@@ -35,19 +21,22 @@ You should see:
  * Press CTRL+C to quit
 ```
 
-### Step 5: Open in Browser
-Go to: **http://localhost:5000**
+### Step 3: Initial Setup Wizard
+Open your browser and visit: **http://localhost:5000**
+Because the database is fresh, you will automatically be redirected to the **Setup Wizard**.
+Fill out the form with your Company Name, Admin Name, Admin Email, and Admin Password to initialize your system.
 
 ---
 
-## 🎯 Default Credentials
+## 🎯 Accounts & Registration
 
 **Admin Login:**
-- Email: `admin@company.com`
-- Password: `Admin@123`
+- Use the credentials you just created in the Setup Wizard.
 
-**Employee:**
-- Register a new account to test employee features
+**Employee Login:**
+- Register a new account to test employee features. 
+- *Note:* Employees must use the company email domain configured during the Setup Wizard.
+- *Note:* New employees are placed in a **Pending** status and must be manually approved by the Admin before they can log in.
 
 ---
 
@@ -56,12 +45,14 @@ Go to: **http://localhost:5000**
 ```
 Employee_Leave_Management/
 ├── app.py                      # Flask app with SQLAlchemy
-├── leave_management.db         # SQLite database (created automatically)
-├── requirements.txt            # Python dependencies
-├── README.md                   # This file
+├── leave_management.db         # SQLite database (created automatically on run)
+├── requirements.txt            # Python dependencies (includes gunicorn for deployment)
+├── README.md                   # Repository overview
+├── SETUP.md                    # This file
 │
 ├── templates/
 │   ├── index.html              # Landing page
+│   ├── setup.html              # Database initialization wizard
 │   ├── employee_login.html     # Employee login
 │   ├── employee_register.html  # Employee registration
 │   ├── employee_dashboard.html # Employee dashboard
@@ -71,8 +62,9 @@ Employee_Leave_Management/
 │   ├── admin_login.html        # Admin login
 │   ├── admin_dashboard.html    # Admin dashboard
 │   ├── admin_leave_requests.html # Manage leave requests
-│   ├── admin_employees.html    # Manage employees
+│   ├── admin_employees.html    # Manage and approve employees
 │   ├── admin_employee_detail.html # Employee details
+│   ├── Macros.html             # Reusable UI components (like sidebars)
 │   └── base.html               # Base template
 │
 └── static/
@@ -87,17 +79,17 @@ Employee_Leave_Management/
 ## 🔧 Key Features
 
 ✅ **Employee Module**
-- Register & Login
+- Register & Login (Domain restricted & Admin approved)
 - Apply for leave (Casual, Sick, Earned)
 - View leave history
 - Track leave balance
 - Manage profile
 
 ✅ **Admin Module**
-- Review leave requests
-- Approve/Reject leave
-- Manage employees
-- View employee details
+- Initial setup wizard for dynamic configuration
+- Approve/Reject new employee registrations
+- Review and Approve/Reject leave requests
+- Manage employees & View employee details
 - Analytics dashboard
 
 ✅ **Security**
@@ -113,7 +105,7 @@ Employee_Leave_Management/
 **Employees Table:**
 - emp_id, name, email, password
 - department, designation, phone, join_date
-- casual_balance, sick_balance, earned_balance
+- casual_balance, sick_balance, earned_balance, status (Pending/Active/Rejected)
 
 **Leave Requests Table:**
 - employee_id, leave_type, start_date, end_date
@@ -121,6 +113,9 @@ Employee_Leave_Management/
 
 **Admins Table:**
 - name, email, password
+
+**Settings Table:**
+- key, value (Stores dynamic company name and email domain)
 
 ---
 
@@ -132,13 +127,11 @@ Employee_Leave_Management/
 app.run(debug=True, port=5001)
 ```
 
-**Issue: Database already exists**
-```bash
-# Delete the old database and start fresh:
-del leave_management.db
-```
-
-Then re-run: `/init_db` and `/seed_admin`
+**Issue: Reset Database**
+If you want to start completely fresh:
+1. Stop the server (`Ctrl+C`).
+2. Delete the `leave_management.db` file.
+3. Restart the server and visit `http://localhost:5000` to go through the Setup Wizard again.
 
 ---
 
